@@ -63,16 +63,16 @@ proc decompress {infile} {
 
 proc output {contents outputfile} {
 	if {$outputfile != ""} {
-		puts [open $outputfile w] $contents
+		puts -nonewline [open $outputfile w] $contents
 	} else {
-		puts stdout $contents
+		puts -nonewline stdout $contents
 	}
 }
 
 
 switch $direction {
 	c {
-		puts stderr "Packing $infile\n"
+		puts stderr "  Packing $infile"
 		output [compress $infile] $outfile
 	}
 	d {
