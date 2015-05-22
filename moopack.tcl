@@ -19,14 +19,17 @@ set infile [lindex $argv 1]
 set outfile [lindex $argv 2]
 
 
+variable WORD_SIZE 7 
+
 proc compress {infile} {
+	variable WORD_SIZE
 	set header {}
 	set packed {}
 	#set fsize [file size $filename]
 	set channelid [open $infile r]
 
 	while {![eof $channelid]} { ;# As the wiki warned me, there is some bug here where I read an extra newline
-		set chars [read $channelid 32]
+		set chars [read $channelid $WORD_SIZE]
 		set index [lsearch $header $chars]
 		set alreadySeen [expr $index != -1]
 		if {$alreadySeen} {
