@@ -18,29 +18,27 @@ set infile [lindex $argv 1]
 set outfile [lindex $argv 2]
 
 
-variable WORD_SIZE 7 
-
 proc compress {infile} {
-	variable WORD_SIZE
 	set header {}
 	set packed {}
 	#set fsize [file size $filename]
 	set channelid [open $infile r]
 
-	while {![eof $channelid]} { ;# As the wiki warned me, there is some bug here where I read an extra newline
-		set chars [read $channelid $WORD_SIZE]
-		set index [lsearch $header $chars]
+	set data [read $channelid]
+	close $channelid
+	set words [split $data { }]
+
+	foreach word $words {
+		set index [lsearch $header $word]
 		set alreadySeen [expr $index != -1]
 		if {$alreadySeen} {
 			set packed $packed.$index
 		} else {
-			lappend header $chars
+			lappend header $word
 			set packed $packed.[expr [llength $header] - 1]
 		}
-		if [eof $channelid] break
 	}
 
-	close $channelid
 	return "$header`$packed"
 }
 
@@ -59,10 +57,10 @@ proc decompress {infile} {
 
 	set inflated {}
 	foreach {i} $refs {
-		set actualValue [lindex $header $i] 
-		set inflated $inflated$actualValue
+		set actualValue [lindex $header $i]
+		lappend inflated $actualValue
 	}
-	return $inflated
+	return [join $inflated { }]
 }
 
 proc output {contents outputfile} {
