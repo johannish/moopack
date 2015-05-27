@@ -47,10 +47,13 @@ proc compress {infile} {
 proc decompress {infile} {
 	set channelid [open $infile r]
 	set data [read $channelid]
-	set parts [split $data "`"]
-	set headerParts [lrange $parts 0 end-1] ;#There may be many parts if data contains a backtick (`)
-	set header [join $headerParts "`"]
-	set packed [lindex $parts end]
+	set separatorIndex [string last ` $data]
+	if {$separatorIndex == -1} {
+		puts stderr {Malformed moopack file.}
+		exit 1;
+	}
+	set header [string range $data 0 $separatorIndex-1]
+	set packed [string range $data $separatorIndex+1 end]
 	set refs [split $packed .]
 	set refs [lrange $refs 1 end]
 
