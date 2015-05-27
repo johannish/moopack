@@ -1,7 +1,6 @@
 #!/usr/local/bin/tclsh
 
 # A stupid compression algorithm (at least as dumb as a cow).
-# Currently cannot compress data which contains the backtick (`) character.
 
 set usageStr "moopack usage: moopack.tcl c|d input_file \[output_file\]"
 
@@ -49,8 +48,8 @@ proc decompress {infile} {
 	set channelid [open $infile r]
 	set data [read $channelid]
 	set parts [split $data "`"]
-	set header1 [lrange $parts 0 end-1] ;# why does this return a nested list?
-	set header [lindex $header1 0] ;# hack to unwrap list from previous line
+	set headerParts [lrange $parts 0 end-1] ;#There may be many parts if data contains a backtick (`)
+	set header [join $headerParts "`"]
 	set packed [lindex $parts end] ;# Why does this have a trailing newline?
 	set packedWithoutTrailingNewline [lrange $packed 0 0] ;# A hack I discovered to discard the trailing newline
 	set refs [split $packedWithoutTrailingNewline "."]
