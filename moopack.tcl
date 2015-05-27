@@ -50,9 +50,8 @@ proc decompress {infile} {
 	set parts [split $data "`"]
 	set headerParts [lrange $parts 0 end-1] ;#There may be many parts if data contains a backtick (`)
 	set header [join $headerParts "`"]
-	set packed [lindex $parts end] ;# Why does this have a trailing newline?
-	set packedWithoutTrailingNewline [lrange $packed 0 0] ;# A hack I discovered to discard the trailing newline
-	set refs [split $packedWithoutTrailingNewline "."]
+	set packed [lindex $parts end]
+	set refs [split $packed .]
 	set refs [lrange $refs 1 end]
 
 	set inflated {}
